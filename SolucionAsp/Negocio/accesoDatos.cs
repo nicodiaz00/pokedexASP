@@ -14,16 +14,18 @@ namespace Negocio
         private SqlConnection conexion;
         private SqlCommand comando;
         private SqlDataReader lector;
+        public SqlDataReader Lector
+        {
+            get { return lector; }
+        }
+
 
         public accesoDatos()
         {
             conexion = new SqlConnection("server=.\\SQLEXPRESS; database= POKEDEX_DB; integrated security= true");
             comando = new SqlCommand();
         }
-        public SqlDataReader Lector
-        {
-            get { return lector; }
-        }
+        
         public void setearConsulta(string consulta)
         {
             comando.CommandType = System.Data.CommandType.Text;
@@ -50,6 +52,24 @@ namespace Negocio
             {
                 lector.Close();
                 conexion.Close();
+            }
+        }
+        public void setearParametro(string clave, object valor)
+        {
+            comando.Parameters.AddWithValue(clave, valor);
+        }
+        public void ejecutarAccion()
+        {
+            comando.Connection = conexion;
+            try
+            {
+                conexion.Open();
+                comando.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
     }

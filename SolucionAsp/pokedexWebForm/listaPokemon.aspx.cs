@@ -20,5 +20,17 @@ namespace pokedexWebForm
             dgvPokemons.DataSource = Session["listaPokemon"];
             dgvPokemons.DataBind();
         }
+
+        protected void dgvPokemons_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var idPoke = dgvPokemons.SelectedDataKey.Value.ToString();
+            Response.Redirect("FormularioPokemon.aspx?id="+ idPoke);
+        }
+
+        protected void dgvPokemons_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            dgvPokemons.PageIndex = e.NewPageIndex;
+            dgvPokemons.DataBind();
+        }
     }
 }
