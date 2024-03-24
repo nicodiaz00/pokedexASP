@@ -16,7 +16,7 @@ namespace Negocio
             accesoDatos conexionDB = new accesoDatos();
             try
             {
-                conexionDB.setearConsulta("Select P.Id, P.Numero,P.Nombre, P.Descripcion,P.UrlImagen, E.descripcion as Tipo, D.descripcion as Debilidad from POKEMONS P, ELEMENTOS E, ELEMENTOS D where P.IdTipo = E.Id and P.IdDebilidad = D.Id and P.Id = "+ id);
+                conexionDB.setearConsulta("Select P.Id, P.Numero,P.Nombre, P.Descripcion,P.UrlImagen, E.descripcion as Tipo, D.descripcion as Debilidad, P.IdTipo,P.IdDebilidad from POKEMONS P, ELEMENTOS E, ELEMENTOS D where P.IdTipo = E.Id and P.IdDebilidad = D.Id and P.Id =" + id);
                 conexionDB.ejecutarLectura();
 
                 while(conexionDB.Lector.Read())
@@ -53,14 +53,23 @@ namespace Negocio
                 conexionDB.cerrarConexion();
             }
         }
-        public List<Pokemon> listarPokemon()
+        public List<Pokemon> listarPokemon(string id="")
         {
             List<Pokemon> list = new List<Pokemon>();
             accesoDatos datos = new accesoDatos();
 
             try
             {
-                datos.setearConsulta("Select P.Id, P.Numero,P.Nombre, P.Descripcion,P.UrlImagen, E.descripcion as Tipo, D.descripcion as Debilidad from POKEMONS P, ELEMENTOS E, ELEMENTOS D where P.IdTipo = E.Id and P.IdDebilidad = D.Id");
+                if (id != "")
+                {
+                    datos.setearConsulta("Select P.Id, P.Numero,P.Nombre, P.Descripcion,P.UrlImagen, E.descripcion as Tipo, D.descripcion as Debilidad, P.IdTipo,P.IdDebilidad from POKEMONS P, ELEMENTOS E, ELEMENTOS D where P.IdTipo = E.Id and P.IdDebilidad = D.Id and P.Id= "+ id);
+                }
+                else
+                {
+                    datos.setearConsulta("Select P.Id, P.Numero,P.Nombre, P.Descripcion,P.UrlImagen, E.descripcion as Tipo, D.descripcion as Debilidad, P.IdTipo,P.IdDebilidad from POKEMONS P, ELEMENTOS E, ELEMENTOS D where P.IdTipo = E.Id and P.IdDebilidad = D.Id");
+                }
+                
+                
                 datos.ejecutarLectura();
 
                 while (datos.Lector.Read())
@@ -82,8 +91,10 @@ namespace Negocio
                     
                     
                     pokeAuxiliar.Tipo = new Tipo();
+                    pokeAuxiliar.Tipo.Id = (int)datos.Lector["IdTipo"];
                     pokeAuxiliar.Tipo.DescripcionTipo = (string)datos.Lector["Tipo"];
                     pokeAuxiliar.Debilidad = new Debilidad();
+                    pokeAuxiliar.Debilidad.Id = (int)datos.Lector["IdDebilidad"];
                     pokeAuxiliar.Debilidad.DescripcionDebilidad = (string)datos.Lector["Debilidad"];
 
                     list.Add(pokeAuxiliar);
@@ -128,6 +139,39 @@ namespace Negocio
             {
                 nuevaConexion.cerrarConexion();
             }
+        }
+
+        public void modificarPokemon(Pokemon pokemonModificado)
+        {
+            accesoDatos conexionNueva = new accesoDatos();
+
+            try
+            {
+                conexionNueva.setearConsulta("update POKEMONS set Numero = @numero, Nombre = @nombre, Descripcion = @desc, UrlImagen = @img, IdTipo = @idTipo, IdDebilidad = @idDebilidad Where Id = @id");
+                conexionNueva.setearParametro("@numero",pokemonModificado.Numero);
+                conexionNueva.setearParametro("@nombre",pokemonModificado.Nombre);
+                conexionNueva.setearParametro("desc",pokemonModificado.Descripcion);
+                conexionNueva.setearParametro("@img",pokemonModificado.urlImagen);
+                conexionNueva.setearParametro("@idTipo",pokemonModificado.Tipo.Id);
+                conexionNueva.setearParametro("@idDebilidad",pokemonModificado.Debilidad.Id);
+                conexionNueva.setearParametro("@id", pokemonModificado.Id);
+
+                conexionNueva.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                conexionNueva.cerrarConexion();
+            }
+        }
+
+        public void eliminarPokemon(Pokemon pokemonEliminado)
+        {
+
         }
     }
 }

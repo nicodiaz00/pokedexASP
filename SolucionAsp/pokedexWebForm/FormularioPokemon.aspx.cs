@@ -18,7 +18,7 @@ namespace pokedexWebForm
             
             try
             {
-                
+                //configuracion inicial
                 
                 if (!IsPostBack)
                 {
@@ -36,29 +36,78 @@ namespace pokedexWebForm
                     
                     ddlTIPO.DataBind();
                     ddlDEBILIDAD.DataBind();
-                    
-                    
 
                 }
-                if (Request.QueryString["id"] != null)
+                /*
+                if (Request.QueryString["id"] != null) //aca valido si viene un ID
                 {
                     PokemonNegocio negocio = new PokemonNegocio();
-                    List<Pokemon> listado = negocio.listarConId(Request.QueryString["id"].ToString());
-                    Pokemon seleccionado = listado[0];
+                    //parte nnueva que estoy agregando(creo los elementos tipo y debilidad)
+                    TipoNegocio TipoPoke = new TipoNegocio();
+                    List<Tipo> listTIpos =TipoPoke.listarTipo();
+                    ddlTIPO.DataSource= listTIpos;
+                    ddlTIPO.DataTextField = "DescripcionTipo";
+                    ddlTIPO.DataValueField= "Id";
+                    
+
+                    DebilidadNegocio debilidadPoke  = new DebilidadNegocio();
+                    List<Debilidad> listadoDebilidad = debilidadPoke.listarDebilidad();
+                    ddlDEBILIDAD.DataSource= listadoDebilidad;
+                    ddlDEBILIDAD.DataTextField = "DescripcionDebilidad";
+                    ddlDEBILIDAD.DataValueField = "Id";
+
+                    ddlTIPO.DataBind();
+                    ddlDEBILIDAD.DataBind();
+
+
+                    List<Pokemon> listado = negocio.listarConId(Request.QueryString["id"].ToString()); 
+                    Pokemon seleccionado = listado[0]; //aca esta el pokemon que nace del listar
 
                     txtID.Text = Request.QueryString["id"].ToString();
+                    
                     txtNOMBRE.Text = seleccionado.Nombre;
                     txtNUMERO.Text = seleccionado.Numero.ToString();
                     txtDESCRIPCION.Text = seleccionado.Descripcion;
+                    txtIMAGEN.Text = seleccionado.urlImagen;
+                    ddlTIPO.SelectedValue = seleccionado.Tipo.Id.ToString();
+                    ddlDEBILIDAD.SelectedValue=seleccionado.Debilidad.Id.ToString();
                     
 
+                    
+
+                    txtIMAGEN_TextChanged(sender, e);
+                
                     //precargar campos del formulario
                 }
+                */
+
+                if (Request.QueryString["id"] != null && !IsPostBack)
+                {
+                    PokemonNegocio negocio = new PokemonNegocio();
+                    List<Pokemon> listado = negocio.listarPokemon(Request.QueryString["id"]);
+                    Pokemon seleccion = listado[0];
+
+                    //precargamos campos
+                    txtID.Text = Request.QueryString["id"];
+                    txtNOMBRE.Text = seleccion.Nombre;
+                    txtNUMERO.Text = seleccion.Numero.ToString();
+                    txtDESCRIPCION.Text = seleccion.Descripcion;
+                    txtIMAGEN.Text = seleccion.urlImagen;
+
+                    ddlTIPO.SelectedValue = seleccion.Tipo.Id.ToString();
+
+                    ddlDEBILIDAD.SelectedValue = seleccion.Debilidad.Id.ToString();
+                    txtIMAGEN_TextChanged(sender, e);
+
+
+
+                }
+
+
 
             }
             catch (Exception ex)
             {
-
                 Session.Add("error", ex);
                 throw;
                 //posteriormente iremos a una pantalla de error
@@ -84,7 +133,21 @@ namespace pokedexWebForm
                 nuevoPoke.Debilidad = new Debilidad();
                 nuevoPoke.Debilidad.Id = int.Parse(ddlDEBILIDAD.SelectedValue);
 
-                negocio.agregarPokemon(nuevoPoke);
+
+                if (Request.QueryString["id"]!=null) 
+                {
+                    //aca deberiamos poner el modificarpokemon
+                    nuevoPoke.Id = int.Parse(txtID.Text);
+                    negocio.modificarPokemon(nuevoPoke);
+                    
+                }
+                else
+                {
+                    negocio.agregarPokemon(nuevoPoke);
+                }
+                
+
+
                 Response.Redirect("listaPokemon.aspx", false);
                 
 
@@ -94,7 +157,7 @@ namespace pokedexWebForm
             {
 
                 Session.Add("error", ex);
-                throw;
+                Response.Redirect("Error.aspx");
             }
 
         }
@@ -102,6 +165,11 @@ namespace pokedexWebForm
         protected void txtIMAGEN_TextChanged(object sender, EventArgs e)
         {
             campoImg.ImageUrl= txtIMAGEN.Text;
+        }
+
+        protected void btnEliminar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Dominio
         public string urlImagen { get; set; }
 
         public Tipo Tipo { get; set; }
+
         public Debilidad Debilidad { get; set;}
     }
 }

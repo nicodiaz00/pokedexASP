@@ -26,13 +26,18 @@
                     </div>
                     <div class="mb-3">
                         <label for="ddlTipo" class="form-label">Tipo</label>
-                        <asp:DropDownList ID="ddlTIPO" runat="server" CssClass="form-control"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlTIPO" runat="server" CssClass="form-control" AutoPostBack="true"></asp:DropDownList>
                     </div>
                     <div class="mb-3">
                         <label for="ddlDebilidad" class="form-label">Debilidad</label>
-                        <asp:DropDownList ID="ddlDEBILIDAD" CssClass="form-control" runat="server"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlDEBILIDAD" CssClass="form-control" runat="server" AutoPostBack="true"></asp:DropDownList>
                     </div>
-
+                    <div class="mb-3">
+                        <asp:Button ID="btnENVIAR" runat="server" Text="Enviar" OnClick="btnENVIAR_Click" />
+                    </div>
+                    <div class="mb-3">
+                        <asp:Button ID="btnEliminar" runat="server" Text="Eliminar" OnClick="btnEliminar_Click" />
+                    </div>
 
                 </div>
                 <div class="col-4">
@@ -42,9 +47,7 @@
                         <asp:Image ImageUrl="https://img.freepik.com/vector-gratis/ilustracion-icono-galeria_53876-27002.jpg" ID="campoImg" runat="server" Width="60%" />
 
                     </div>
-                    <div class="mb-3">
-                        <asp:Button ID="btnENVIAR" runat="server" Text="Enviar" OnClick="btnENVIAR_Click" />
-                    </div>
+
 
                 </div>
             </div>
